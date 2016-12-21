@@ -311,7 +311,7 @@ class SVGLib:
                 while i < row.shape.PartCount:
                     lastX = None
                     lastY = None
-                    coords += "M "
+                    coords += ""
 
                     j = 0
                     part = row.shape.GetPart(i)
@@ -338,7 +338,7 @@ class SVGLib:
                             pnt = part.Next()
                             if pnt:
                                 j = j + 1
-                                coords += "M "
+                                coords += ""
                                 lastX = None
                                 lastY = None
                     i = i + 1
