@@ -161,14 +161,14 @@ class SVGLib:
         return value or "default"
 
     def _makePath(self,row,coords):
-        """ create polygon or polyline in SVG notation"""
+        """ create polygon or polyline in SVG 'path' notation"""
         code = []
         code.append("<path ")
         code.append("""class="%s" """ % (self._getClass(row)))            
         code.append("%s " % self._getData(row))            
         code.append("""d="%s" />""" % (coords))
-        return "".join(code)
-
+        return "".join(code)        
+        
     def _makePoint(self,row,cx,cy):
         """ create circle in SVG notation"""
         code = []
@@ -176,6 +176,15 @@ class SVGLib:
         code.append("""class="%s" """ % (self._getClass(row)))            
         code.append("%s " % self._getData(row))            
         code.append("""cx="%s" cy="%s" r="%s" />""" % (cx,cy,self._inPercent(SVG_DEFAULT_CIRCLE_RADIUS)))
+        return "".join(code)
+
+    def _makePolygon(self,row,coords):
+        """ create polygon in SVG notation"""
+        code = []
+        code.append("<polygon ")
+        code.append("""class="%s" """ % (self._getClass(row)))            
+        code.append("%s " % self._getData(row))            
+        code.append("""points="%s" />""" % (coords))
         return "".join(code)
         
     def _makeText(self,row,cx,cy):
@@ -247,7 +256,7 @@ class SVGLib:
     def parseCoords(self):
         self.gp.AddMessage("Processing coords of %s (%s) ..." % (self.layer,self.layer_type))
 
-        if self.layer_type == "ply" or self.layer_type == "lin" :
+        if self.layer_type == "lin" :
             rows = self.gp.SearchCursor(self.layer)
             row = rows.Next()
 
@@ -290,6 +299,51 @@ class SVGLib:
                     i = i + 1
 
                 self.paths.append(self._makePath(row,coords))
+                row = rows.Next()
+                
+        elif self.layer_type == "ply":
+            rows = self.gp.SearchCursor(self.layer)
+            row = rows.Next()
+
+            while row:
+                i = 0
+                coords = ""
+                while i < row.shape.PartCount:
+                    lastX = None
+                    lastY = None
+                    coords += "M "
+
+                    j = 0
+                    part = row.shape.GetPart(i)
+                    part.Reset()
+                    pnt = part.Next()
+
+                    while pnt:
+                        if self.relative == 'false':
+                            coords += "%s %s " % (self._round(pnt.x),self._round(pnt.y*-1))
+                        else:
+                            if lastX and lastY:
+                                relX = pnt.x - lastX
+                                relY = (pnt.y*-1) - lastY
+                                lastX = pnt.x
+                                lastY = pnt.y*-1
+                                coords += "%s %s " % (self._round(relX),self._round(relY))
+                            else:
+                                lastX = pnt.x
+                                lastY = pnt.y*-1
+                                coords += "%s %s l " % (self._round(lastX),self._round(lastY))
+
+                        pnt = part.Next()
+                        if not pnt:
+                            pnt = part.Next()
+                            if pnt:
+                                j = j + 1
+                                coords += "M "
+                                lastX = None
+                                lastY = None
+                    i = i + 1
+
+                self.paths.append(self._makePolygon(row,coords))
                 row = rows.Next()
 
         else:
