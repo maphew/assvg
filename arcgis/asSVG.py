@@ -79,10 +79,16 @@ class SVGLib:
         self.classfield = self._asList(argv[4])
         self.datafields = self._asList(argv[5])
         self.outputfile = argv[6]
+##        self.bbox = argv[7]
+        self.bbox = "-2312.4691161752,448355.273415705,997814.531137825,1781857.94042104".split(",")
 
-        """ parse extent of layer and set viewBox for SVG accordingly"""
-        bbox = map(self._round,self.gp.describe(self.layer).Extent.split(" "))
-        self.extent = [ bbox[0],bbox[3]*-1,bbox[2]-bbox[0],bbox[3]-bbox[1] ]
+        if not self.bbox:
+            """ parse extent of layer and set viewBox for SVG accordingly"""
+            bbox = map(self._round,self.gp.describe(self.layer).Extent.split(" "))
+            self.extent = [ bbox[0],bbox[3]*-1,bbox[2]-bbox[0],bbox[3]-bbox[1] ]
+        else:
+            bbox = self.bbox
+            self.extent = [ bbox[0],bbox[3]*-1,bbox[2]-bbox[0],bbox[3]-bbox[1] ]
 
         # initialize colorsystem and define colors
         ##self.libPath = "%s" % re.sub("\\\[^\\\]+$","",argv[0])
@@ -414,6 +420,9 @@ class SVGLib:
         out.write(code)
         out.close()
         self.gp.AddMessage("Created %s." % self.outputfile)
+
+        self.gp.addMessage("Extent: %s" % self.extent)
+
 
 
 class SVGColor:
