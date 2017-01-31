@@ -88,7 +88,7 @@ class SVGLib:
         ##self.libPath = "%s" % re.sub("\\\[^\\\]+$","",argv[0])
         self.libPath = os.path.dirname(os.path.realpath(__file__))
         self.colors = SVGColor(gp,self.libPath)
-        
+
     ########################
     #
     # private methods
@@ -116,7 +116,7 @@ class SVGLib:
                 return 'pnt'
         else:
             return 'default'
-            
+
     def _asList(self,value):
         """ return list-presentation of value, separator=';' """
         if re.search(";",value):
@@ -149,7 +149,7 @@ class SVGLib:
         return value
 
     def _inPercent(self,value):
-        """ compute percentages for attributes like stroke-width, r, ... 
+        """ compute percentages for attributes like stroke-width, r, ...
             follows SVG 1.1 spec http://www.w3.org/TR/SVG/coords.html#Units"""
         if self.extent:
             return self._round(value*(sqrt((self.extent[2]**2)+(self.extent[3]**2))/sqrt(2)))
@@ -164,17 +164,17 @@ class SVGLib:
         """ create polygon or polyline in SVG 'path' notation"""
         code = []
         code.append("<path ")
-        code.append("""class="%s" """ % (self._getClass(row)))            
-        code.append("%s " % self._getData(row))            
+        code.append("""class="%s" """ % (self._getClass(row)))
+        code.append("%s " % self._getData(row))
         code.append("""d="%s" />""" % (coords))
-        return "".join(code)        
-        
+        return "".join(code)
+
     def _makePoint(self,row,cx,cy):
         """ create circle in SVG notation"""
         code = []
         code.append("<circle ")
-        code.append("""class="%s" """ % (self._getClass(row)))            
-        code.append("%s " % self._getData(row))            
+        code.append("""class="%s" """ % (self._getClass(row)))
+        code.append("%s " % self._getData(row))
         code.append("""cx="%s" cy="%s" r="%s" />""" % (cx,cy,self._inPercent(SVG_DEFAULT_CIRCLE_RADIUS)))
         return "".join(code)
 
@@ -182,18 +182,18 @@ class SVGLib:
         """ create polygon in SVG notation"""
         code = []
         code.append("<polygon ")
-        code.append("""class="%s" """ % (self._getClass(row)))            
-        code.append("%s " % self._getData(row))            
+        code.append("""class="%s" """ % (self._getClass(row)))
+        code.append("%s " % self._getData(row))
         code.append("""points="%s" />""" % (coords))
         return "".join(code)
-        
+
     def _makeText(self,row,cx,cy):
         """ create text in SVG notation"""
         code = []
         code.append("<text ")
-        code.append("""class="%s" """ % (self._getClass(row)))            
+        code.append("""class="%s" """ % (self._getClass(row)))
         code.append("""x="%s" y="%s">""" % (cx,cy))
-        code.append("%s" % self._getTextData(row))            
+        code.append("%s" % self._getTextData(row))
         code.append("</text>")
         return "".join(code)
 
@@ -231,7 +231,7 @@ class SVGLib:
 
     def _getTextData(self,row):
         """ collect text for labels from data attributes if needed """
-        labels = []        
+        labels = []
         for field in self.datafields:
             try:
                 if row.getValue(field):
@@ -252,7 +252,7 @@ class SVGLib:
     # main geometry parser
     #
     ########################
-    
+
     def parseCoords(self):
         self.gp.AddMessage("Processing coords of %s (%s) ..." % (self.layer,self.layer_type))
 
@@ -300,7 +300,7 @@ class SVGLib:
 
                 self.paths.append(self._makePath(row,coords))
                 row = rows.Next()
-                
+
         elif self.layer_type == "ply":
             rows = self.gp.SearchCursor(self.layer)
             row = rows.Next()
@@ -364,7 +364,7 @@ class SVGLib:
                 else:
                     pnt = row.shape.GetPart(0)
                     if self.layer_type == 'txt':
-                        self.points.append(self._makeText(row,self._round(pnt.x),self._round(pnt.y)*-1))                    
+                        self.points.append(self._makeText(row,self._round(pnt.x),self._round(pnt.y)*-1))
                     else:
                         self.points.append(self._makePoint(row,self._round(pnt.x),self._round(pnt.y)*-1))
 
@@ -376,7 +376,7 @@ class SVGLib:
     # print out result to file
     #
     ########################
-    
+
     def writeFile(self):
         """ return a simple SVG presentation of results """
         code = """<?xml version="1.0" encoding="UTF-8" ?>
@@ -409,7 +409,7 @@ class SVGLib:
         "\n".join(self.points),
         "\n".join(self.paths)
        )
-        
+
         out = open(self.outputfile,"w")
         out.write(code)
         out.close()
