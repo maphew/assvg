@@ -413,7 +413,7 @@ class SVGLib:
         out = open(self.outputfile,"w")
         out.write(code)
         out.close()
-        self.gp.AddWarning("Created %s." % self.outputfile)
+        self.gp.AddMessage("Created %s." % self.outputfile)
 
 
 class SVGColor:
