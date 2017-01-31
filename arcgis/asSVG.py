@@ -59,8 +59,8 @@ class SVGLib:
         locale.setlocale(locale.LC_ALL, "english")
 
         """ set globals """
-        self.prefix = "assvg"
-        self.namespace = "http://svg.cc/ns/assvg"
+        self.prefix = "d" # namespace, short for 'data'
+        self.namespace = "https://github.com/openwebcc/assvg"
         self.missingval = "#"
         self.absolute = 0
         self.paths = []
@@ -388,13 +388,13 @@ class SVGLib:
  xmlns:%s="%s"
  viewBox="%s %s %s %s"
 >
-<style type="text/css"><![CDATA[
+<style type="text/css">
  .lindefault { fill:none;stroke:%s;stroke-width:%s; }
  .plydefault { fill:%s;stroke:none; }
  .pntdefault { fill:%s;stroke:%s;stroke-width:%s; }
  .txtdefault { fill:%s;stroke:none;font-size:%spx; }
 %s
-]]></style>
+</style>
 %s
 %s
 </svg>
