@@ -80,7 +80,8 @@ class SVGLib:
         self.datafields = self._asList(argv[5])
         self.outputfile = argv[6]
 ##        self.bbox = argv[7]
-        self.bbox = "-2312.4691161752,448355.273415705,997814.531137825,1781857.94042104".split(",")
+##        self.bbox = "-2312.4691161752,448355.273415705,997814.531137825,1781857.94042104".split(",")
+        self.bbox = None
 
         if not self.bbox:
             """ parse extent of layer and set viewBox for SVG accordingly"""
